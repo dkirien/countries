@@ -2,12 +2,13 @@ import { GetStaticPropsResult, NextPage } from 'next'
 import client from '../lib/apollo-client'
 import { getContinentsWithCountries } from '@/queries'
 import { IContinent } from '@/types'
+import PageLayout from '@/components/PageLayout'
 
 const Home: NextPage<{ continents: IContinent[] }> = ({continents}) => {
   return (
-    <div>
-
-    </div>
+    <PageLayout title={'Countries List'}>
+      List
+    </PageLayout>
   )
 }
 
