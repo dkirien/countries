@@ -3,7 +3,7 @@ import PageLayout from '@/components/PageLayout'
 
 const FormPage: NextPage = () => {
   return (
-    <PageLayout title={'Add Country'}>
+    <PageLayout title={'Add custom country'}>
       Form
     </PageLayout>
   )

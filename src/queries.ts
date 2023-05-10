@@ -5,10 +5,10 @@ query {
   continents {
     code
     name
-    countries {
+    child: countries {
       code
       name
-      languages {
+      child: languages {
         code
         name
       }

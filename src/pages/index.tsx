@@ -3,11 +3,12 @@ import client from '../lib/apollo-client'
 import { getContinentsWithCountries } from '@/queries'
 import { IContinent } from '@/types'
 import PageLayout from '@/components/PageLayout'
+import CountriesList from '@/components/CountriesList'
 
-const Home: NextPage<{ continents: IContinent[] }> = ({continents}) => {
+const Home: NextPage<{ continents: IContinent[] }> = ({ continents }) => {
   return (
-    <PageLayout title={'Countries List'}>
-      List
+    <PageLayout title={'List of Countries'}>
+      <CountriesList data={continents} />
     </PageLayout>
   )
 }

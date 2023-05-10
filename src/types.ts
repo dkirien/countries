@@ -1,19 +1,21 @@
 import { ReactNode } from 'react'
 
-interface ICommon {
+export interface ICommon {
   code: string
   name: string
 }
 
 export interface IContinent extends ICommon {
-  countries: ICountry[]
-}
-
-export interface ILanguage extends ICommon {
+  child: ICountry[]
 }
 
 export interface ICountry extends ICommon {
-  languages: ILanguage[]
+  child: ICommon[]
+}
+
+export interface IListItem {
+  title?: string
+  content: any
 }
 
 export type PageLayout = {
