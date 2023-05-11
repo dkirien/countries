@@ -1,18 +1,16 @@
 import { FC } from 'react'
+import { Collapsible } from 'react-materialize'
 import { IContinent } from '@/types'
-import { Accordion } from 'flowbite-react'
 import CountriesListItem from '@/components/CountriesListItem'
 
 const CountriesList: FC<{ data: IContinent[] }> = ({ data }) => {
   return (
     <>
-      <Accordion collapseAll={true} alwaysOpen={true}>
+      <Collapsible accordion={false}>
         {data.map(d => (
-          <Accordion.Panel key={d.code}>
-            <CountriesListItem title={d.name} content={d} />
-          </Accordion.Panel>
+          <CountriesListItem title={d.name} content={d} key={d.code} />
         ))}
-      </Accordion>
+      </Collapsible>
     </>
   )
 }

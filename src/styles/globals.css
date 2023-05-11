@@ -1,3 +1,23 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.collapsible .material-icons {
+    display: inline-block;
+    transition: transform .3s ease;
+}
+
+.collapsible li.active > .collapsible-header .material-icons {
+    transform: rotate(180deg);
+}
+
+nav {
+    color: inherit;
+    background-color: inherit;
+}
+
+nav a {
+    color: inherit;
+}
+
+
