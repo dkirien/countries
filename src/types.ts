@@ -49,6 +49,8 @@ export type SelectProps = {
   children: ReactNode
   id: string
   label: string
+  value?: string
+  error?: string
   options?: SelectOptions
   multiple?: boolean
   s?: number
@@ -79,4 +81,10 @@ export type AccordionItem = {
 export type FormPageProps = {
   continents: ICommon[]
   languages: ICommon[]
+}
+
+export type CreatedCountry = {
+  name: string
+  continent: string
+  languages: string[] | string
 }

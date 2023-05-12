@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
-import { FormPageProps, SelectOptions } from '@/types'
+import { CreatedCountry, FormPageProps, SelectOptions } from '@/types'
 import Select from '@/components/Select'
 
 const selectOptions: SelectOptions = {
@@ -21,18 +21,33 @@ const selectOptions: SelectOptions = {
 const addSchema = Yup.object().shape({
   name: Yup.string()
     .trim()
-    .required('Required'),
+    .required('Field is required'),
   continent: Yup.string()
     .trim()
     .required('Required'),
-  languages: Yup.string()
-    .required('Required'),
+  languages: Yup.array()
+    .of(Yup.string())
+    .required('Field is required'),
 })
 
 const AddForm: FC<{ data: FormPageProps }> = ({ data }) => {
+  function submitForm(values: CreatedCountry) {
+    const ls = localStorage.getItem('createdCountries')
+    const arr = ls ? JSON.parse(ls) : []
 
-  function submitForm(values: any) {
-    console.log(values)
+    if ( arr.length > 0 ) {
+      const existingIdx = arr.findIndex((item: CreatedCountry) => item.name === values.name)
+
+      if ( existingIdx !== -1 ) {
+        arr[existingIdx] = values
+      }
+    } else {
+      arr.push(values)
+    }
+
+    localStorage.setItem('createdCountries', JSON.stringify(arr))
+
+    M.toast({html: 'Country is added successfully!'})
   }
 
   return (
@@ -40,11 +55,12 @@ const AddForm: FC<{ data: FormPageProps }> = ({ data }) => {
       initialValues={{
         name: '',
         continent: data.continents[0].code,
-        languages: [],
+        languages: '',
       }}
       validationSchema={addSchema}
-      onSubmit={values => {
+      onSubmit={(values, actions) => {
         submitForm(values)
+        actions.resetForm()
       }}
     >
       {({ errors, touched, values, handleChange, setFieldValue }) => (
@@ -57,14 +73,19 @@ const AddForm: FC<{ data: FormPageProps }> = ({ data }) => {
                     {() => (
                       <div className="input-field col s6">
                         <input
-                          type='text'
+                          type="text"
                           id="name"
                           name={'name'}
+                          className={(touched.name && errors.name) ? 'invalid' : ''}
                           placeholder={'Enter country name'}
+                          value={values.name}
                           onChange={handleChange}
                         />
 
                         <label htmlFor="name" className="active">Name</label>
+                        {errors.name && (
+                          <span className="helper-text" data-error={errors.name} />
+                        )}
                       </div>
                     )}
                   </Field>
@@ -75,6 +96,7 @@ const AddForm: FC<{ data: FormPageProps }> = ({ data }) => {
                         id="continent"
                         label="Select continent"
                         s={6}
+                        value={values.continent}
                         options={selectOptions}
                         onChange={handleChange}
                       >
@@ -96,6 +118,8 @@ const AddForm: FC<{ data: FormPageProps }> = ({ data }) => {
                         label="Select languages"
                         multiple
                         s={12}
+                        value={values.languages}
+                        error={touched.languages ? errors.languages : ''}
                         options={selectOptions}
                         onCloseEnd={(el, value) => setFieldValue('languages', value)}
                       >

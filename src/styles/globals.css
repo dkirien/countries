@@ -27,4 +27,17 @@ input:-webkit-autofill:active{
     -webkit-box-shadow: 0 0 0 30px white inset !important;
 }
 
+.input-field {
+    position: relative;
+}
+
+.input-field .helper-text {
+    position: absolute;
+    left: 0.75rem;
+}
+
+.input-field .helper-text::after {
+    white-space: nowrap;
+}
+
 
