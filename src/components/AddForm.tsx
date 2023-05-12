@@ -1,7 +1,8 @@
 import { FC } from 'react'
 import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
-import { CreatedCountry, FormPageProps, SelectOptions } from '@/types'
+import { CreatedCountry, FormPageProps, IContinent, SelectOptions } from '@/types'
+import { createCountryObf } from '@/helpers'
 import Select from '@/components/Select'
 
 const selectOptions: SelectOptions = {
@@ -36,18 +37,22 @@ const AddForm: FC<{ data: FormPageProps }> = ({ data }) => {
     const arr = ls ? JSON.parse(ls) : []
 
     if ( arr.length > 0 ) {
-      const existingIdx = arr.findIndex((item: CreatedCountry) => item.name === values.name)
+      const existingIdx = arr.findIndex((item: IContinent) => {
+        return item.child[0].name === values.name
+      })
 
       if ( existingIdx !== -1 ) {
-        arr[existingIdx] = values
+        arr[existingIdx] = createCountryObf(values, data.continents, data.languages)
+      } else {
+        arr.push(createCountryObf(values, data.continents, data.languages))
       }
     } else {
-      arr.push(values)
+      arr.push(createCountryObf(values, data.continents, data.languages))
     }
 
     localStorage.setItem('createdCountries', JSON.stringify(arr))
 
-    M.toast({html: 'Country is added successfully!'})
+    M.toast({ html: 'Country is added successfully!' })
   }
 
   return (

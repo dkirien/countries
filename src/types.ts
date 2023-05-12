@@ -2,6 +2,7 @@ import { ReactNode } from 'react'
 import * as React from 'react'
 
 export interface ICommon {
+  __typename: string
   code: string
   name: string
 }
@@ -15,7 +16,7 @@ export interface ICountry extends ICommon {
 }
 
 export interface IListItem {
-  title?: string
+  title?: string | undefined
   content: any
 }
 
@@ -72,7 +73,8 @@ export type Accordion = {
 }
 
 export type AccordionItem = {
-  title: string
+  title: string | undefined
+  body: any
   expanded?: boolean
   icon?: string
   children?: ReactNode | string
@@ -88,3 +90,9 @@ export type CreatedCountry = {
   continent: string
   languages: string[] | string
 }
+
+export type CreateCountryParams = (
+  formValues: CreatedCountry,
+  continents: ICommon[],
+  languages: ICommon[]
+) => any
