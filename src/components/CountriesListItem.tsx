@@ -1,37 +1,37 @@
 import { FC } from 'react'
-import { Collapsible, CollapsibleItem, Collection, CollectionItem, Icon } from 'react-materialize'
 import { ICommon, IListItem } from '@/types'
+import AccordionItem from '@/components/AccordionItem'
+import Accordion from '@/components/Accordion'
 
 const CountriesListItem: FC<IListItem> = ({ title, content }) => {
   return (
     <>
-      <CollapsibleItem
+      <AccordionItem
         expanded={false}
-        header={title}
-        icon={<Icon>expand_more</Icon>}
-        node="div"
-        onSelect={() => {}}
+        title={title}
+        body={content}
+        icon='expand_more'
       >
         {content.__typename === 'Country' ? (
-          <Collection>
+          <ul className="collection">
             {content.child.length ? (
               content.child.map((ch: ICommon) => (
-                <CollectionItem key={ch.code}>
+                <li className="collection-item" key={ch.code}>
                   {ch.name}
-                </CollectionItem>
+                </li>
               ))
             ) : (
-              <CollectionItem>No languages</CollectionItem>
+              <li className="collection-item">No languages</li>
             )}
-          </Collection>
+          </ul>
         ) : (
-          <Collapsible accordion={false}>
+          <Accordion accordion={false} id={`accordion-${content.code}`}>
             {content.child && content.child.map((ch: ICommon) => (
               <CountriesListItem title={ch.name} content={ch} key={ch.code} />
             ))}
-          </Collapsible>
+          </Accordion>
         )}
-      </CollapsibleItem>
+      </AccordionItem>
     </>
   )
 }

@@ -16,3 +16,21 @@ query {
   }
 }
 `
+
+export const getContinents = gql`
+query {
+  continents {
+    code
+    name
+  }
+}
+`
+
+export const getLanguages = gql`
+query {
+  languages {
+    code
+    name
+  }
+}
+`
