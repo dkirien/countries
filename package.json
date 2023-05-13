@@ -16,6 +16,7 @@
     "autoprefixer": "10.4.14",
     "formik": "^2.2.9",
     "graphql": "^16.6.0",
+    "material-icons": "^1.13.6",
     "materialize-css": "^1.0.0-rc.2",
     "next": "13.4.1",
     "postcss": "8.4.23",
