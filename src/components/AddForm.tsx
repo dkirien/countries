@@ -53,8 +53,8 @@ const AddForm: FC<{ data: FormPageProps }> = ({ data }) => {
     }
 
     localStorage.setItem('createdCountries', JSON.stringify(arr))
-
     M.toast({ html: 'Country is added successfully!' })
+    setIsDeleteBtn(false)
   }
 
   function searchCustomCountry(
