@@ -1,67 +1,87 @@
-import { FC, useEffect } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { SelectProps } from '@/types'
+import { FormSelect } from '@/types'
+
+let M: any = null
 
 const Select: FC<SelectProps> = (
   {
     id, label, s, multiple, options = {}, error, value, onChange, onCloseEnd, children
   }
 ) => {
+  const [elem, setElem] = useState<Element | null>(null)
+  const [instance, setInstance] = useState<FormSelect | null>(null)
+
   useEffect(() => {
     /* Init select */
-    let M = null
-    let elem = null
-    let instance: any = null
-
     if ( typeof window !== 'undefined' ) {
       M = require('materialize-css')
-      elem = document.querySelector(`#${id}`)
-      instance = M.FormSelect.init(elem, {
-        ...options,
-        classes: error ? 'invalid' : '',
-        dropdownOptions: {
-          ...options.dropdownOptions,
-          onCloseEnd: (el: HTMLInputElement) => {
-            // If multiple = true set values after dropdown close
-            if ( multiple ) {
-              const select = document.querySelector('#languages') as HTMLSelectElement
-              const arr = []
-
-              for ( let i = 0; i < select.options.length; i++ ) {
-                if ( select.options[i].selected )
-                  arr.push(select.options[i].value)
-              }
-
-              onCloseEnd && onCloseEnd(el, arr)
-            }
-          }
-        }
-      })
+      setElem(document.querySelector(`#${id}`))
     }
 
-    return () => instance.destroy()
-  }, [error])
+    return () => instance?.destroy()
+  }, [])
+
+  useEffect(() => {
+    if ( elem ) {
+      initSelect()
+      setInstance(M.FormSelect.getInstance(elem))
+    }
+  }, [elem])
 
   useEffect(() => {
     // Reset value after form submit
     if ( typeof value !== 'undefined' ) {
       const select = document.querySelector(`#${id}`) as HTMLSelectElement
-      const selectInput = select.parentElement?.querySelector('input')
+      setSelectValue(select)
+    }
+  }, [value])
 
-      if ( select && selectInput ) {
-        select.value = value
+  function initSelect() {
+    M.FormSelect.init(elem, {
+      ...options,
+      classes: error ? 'invalid' : '',
+      dropdownOptions: {
+        ...options.dropdownOptions,
+        onCloseEnd: (el: HTMLInputElement) => {
+          // If multiple = true set values after dropdown close
+          if ( multiple ) {
+            const select = document.querySelector('#languages') as HTMLSelectElement
+            const arr = []
 
-        if ( value === '' ) {
-          selectInput.value = ''
-        } else {
-          for ( let i = 0; i < select.options.length; i++ ) {
-            if ( select.options[i].value === value ) {
-              selectInput.value = select.options[i].text
+            for ( let i = 0; i < select.options.length; i++ ) {
+              if ( select.options[i].selected )
+                arr.push(select.options[i].value)
             }
+
+            onCloseEnd && onCloseEnd(el, arr)
           }
         }
       }
+    })
+  }
+
+  function setSelectValue(select: HTMLSelectElement) {
+    if ( select && typeof value !== 'undefined' ) {
+      select.value = value
+
+      if ( multiple ) {
+        for ( let i = 0; i < select.options.length; i++ ) {
+          if ( value.includes(select.options[i].value) ) {
+            select.options[i].selected = true
+          }
+        }
+      } else {
+        for ( let i = 0; i < select.options.length; i++ ) {
+          if ( select.options[i].value === value ) {
+            select.options[i].selected = true
+          }
+        }
+      }
+
+      initSelect()
     }
-  }, [value])
+  }
 
   return (
     <div className={`input-field col s${s}`}>

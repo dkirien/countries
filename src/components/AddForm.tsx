@@ -1,7 +1,7 @@
-import { FC } from 'react'
+import { FC, useState } from 'react'
 import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
-import { CreatedCountry, FormPageProps, IContinent, SelectOptions } from '@/types'
+import { CreatedCountry, FormPageProps, ICommon, IContinent, SelectOptions } from '@/types'
 import { createCountryObf } from '@/helpers'
 import Select from '@/components/Select'
 
@@ -32,6 +32,8 @@ const addSchema = Yup.object().shape({
 })
 
 const AddForm: FC<{ data: FormPageProps }> = ({ data }) => {
+  const [isDeleteBtn, setIsDeleteBtn] = useState<boolean>(false)
+
   function submitForm(values: CreatedCountry) {
     const ls = localStorage.getItem('createdCountries')
     const arr = ls ? JSON.parse(ls) : []
@@ -53,6 +55,43 @@ const AddForm: FC<{ data: FormPageProps }> = ({ data }) => {
     localStorage.setItem('createdCountries', JSON.stringify(arr))
 
     M.toast({ html: 'Country is added successfully!' })
+  }
+
+  function searchCustomCountry(
+    name: string,
+    setFieldValue: (field: string, value: any) => void,
+  ) {
+    const ls = localStorage.getItem('createdCountries')
+    const arr = ls ? JSON.parse(ls) : []
+    const searchItem = arr.find((item: IContinent) => item.child[0].name === name)
+
+    if ( searchItem ) {
+      setIsDeleteBtn(true)
+      setFieldValue('continent', searchItem.code)
+      setFieldValue('languages', searchItem.child[0].child.map((l: ICommon) => l.code))
+    } else {
+      setIsDeleteBtn(false)
+      setFieldValue('continent', data.continents[0].code)
+      setFieldValue('languages', '')
+    }
+  }
+
+  function deleteCustomCountry(
+    name: string,
+    setFieldValue: (field: string, value: any) => void,
+  ) {
+    const ls = localStorage.getItem('createdCountries')
+    const arr = ls ? JSON.parse(ls) : []
+
+    if ( name && arr.length ) {
+      const filteredArr = arr.filter((item: IContinent) => item.child[0].name !== name)
+      localStorage.setItem('createdCountries', JSON.stringify(filteredArr))
+      setIsDeleteBtn(false)
+      setFieldValue('continent', data.continents[0].code)
+      setFieldValue('languages', '')
+      setFieldValue('name', '')
+      M.toast({ html: 'Country is deleted!' })
+    }
   }
 
   return (
@@ -84,7 +123,10 @@ const AddForm: FC<{ data: FormPageProps }> = ({ data }) => {
                           className={(touched.name && errors.name) ? 'invalid' : ''}
                           placeholder={'Enter country name'}
                           value={values.name}
-                          onChange={handleChange}
+                          onChange={(e) => {
+                            handleChange(e)
+                            searchCustomCountry(e.target.value, setFieldValue)
+                          }}
                         />
 
                         <label htmlFor="name" className="active">Name</label>
@@ -140,6 +182,16 @@ const AddForm: FC<{ data: FormPageProps }> = ({ data }) => {
 
                 <div className="flex justify-end">
                   <div className="col">
+                    {isDeleteBtn && (
+                      <button
+                        className="btn bg-red-600 mr-5 text-white rounded-md text-sm font-medium hover:bg-gray-900 focus:bg-gray-900"
+                        type={'submit'}
+                        onClick={() => deleteCustomCountry(values.name, setFieldValue)}
+                      >
+                        Delete
+                      </button>
+                    )}
+
                     <button
                       className="btn bg-gray-900 text-white rounded-md text-sm font-medium hover:bg-gray-900 focus:bg-gray-900"
                       type={'submit'}

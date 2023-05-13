@@ -72,6 +72,10 @@ export type Accordion = {
   children?: ReactNode | string
 }
 
+export type FormSelect = {
+  destroy: () => void
+}
+
 export type AccordionItem = {
   title: string | undefined
   body: any

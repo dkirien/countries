@@ -8,17 +8,24 @@ const CountriesList: FC<{ data: IContinent[] }> = ({ data }) => {
 
   useEffect(() => {
     if ( data ) {
-      const cc = localStorage.getItem('createdCountries')
-      const ccArr = cc ? JSON.parse(cc) : []
+      const ls = localStorage.getItem('createdCountries')
+      const arr = ls ? JSON.parse(ls) : []
 
       setCountries(() => {
-        ccArr.forEach((cc: IContinent) => {
-          const currContIdx = data.findIndex(p => p.code === cc.code)
+        if ( arr.length ) {
+          arr.forEach((cc: IContinent) => {
+            const currContIdx = data.findIndex(p => p.code === cc.code)
 
-          if ( currContIdx !== -1 ) {
-            data[currContIdx].child.push(cc.child[0])
-          }
-        })
+            if ( currContIdx !== -1 ) {
+              data[currContIdx].child.push(cc.child[0])
+              data[currContIdx].child.sort((a, b) => {
+                if ( a.name < b.name ) return -1
+                if ( a.name > b.name ) return 1
+                return 0
+              })
+            }
+          })
+        }
 
         return data
       })
