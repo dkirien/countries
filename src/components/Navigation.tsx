@@ -10,7 +10,7 @@ const Navigation: FC = () => {
 
   return (
     <nav className="bg-grey-100 border-solid border border-gray-300">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className={'mx-auto max-w-7xl px-6 lg:px-8'}>
         <div className="flex h-16 items-center justify-end">
           <div className="flex items-center">
             <div className="flex items-baseline space-x-4">

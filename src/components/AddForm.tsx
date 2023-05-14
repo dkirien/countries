@@ -115,7 +115,7 @@ const AddForm: FC<{ data: FormPageProps }> = ({ data }) => {
                 <div className="row">
                   <Field name={'name'}>
                     {() => (
-                      <div className="input-field col s6">
+                      <div className="input-field col s12 m6">
                         <input
                           type="text"
                           id="name"

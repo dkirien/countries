@@ -84,7 +84,7 @@ const Select: FC<SelectProps> = (
   }
 
   return (
-    <div className={`input-field col s${s}`}>
+    <div className={`input-field col s12 m${s}`}>
       <select
         id={id}
         multiple={multiple}
