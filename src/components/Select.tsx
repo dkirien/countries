@@ -13,7 +13,6 @@ const Select: FC<SelectProps> = (
   const [instance, setInstance] = useState<FormSelect | null>(null)
 
   useEffect(() => {
-    /* Init select */
     if ( typeof window !== 'undefined' ) {
       M = require('materialize-css')
       setElem(document.querySelector(`#${id}`))

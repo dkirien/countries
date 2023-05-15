@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from 'react'
 import { DragDropContext, Droppable } from '@hello-pangea/dnd'
 import { IContinent } from '@/types'
-import { isLangArrEqual, onDragEndHandler } from '@/helpers'
+import { isLangArrEqual, LS, onDragEndHandler } from '@/helpers'
 import Accordion from '@/components/Accordion'
 import CountriesListItem from '@/components/CountriesListItem'
 
@@ -11,13 +11,11 @@ const CountriesList: FC<{ data: IContinent[] }> = ({ data }) => {
   useEffect(() => {
     if ( data ) {
       // Добавляем страны для будущей сортировки
-      if ( !localStorage.getItem('sortedCountries') )
-        localStorage.setItem('sortedCountries', JSON.stringify(data))
+      if ( !LS.get('sortedCountries').length )
+        LS.set('sortedCountries', data)
 
-      const sorted = localStorage.getItem('sortedCountries')
-      const sortedArr = sorted ? JSON.parse(sorted) : []
-      const cc = localStorage.getItem('createdCountries')
-      const ccArr = cc ? JSON.parse(cc) : []
+      const sortedArr = LS.get('sortedCountries')
+      const ccArr = LS.get('createdCountries')
 
       setCountries(() => {
         // Добавляем созданные страны
@@ -44,7 +42,7 @@ const CountriesList: FC<{ data: IContinent[] }> = ({ data }) => {
           })
         }
 
-        localStorage.setItem('sortedCountries', JSON.stringify(sortedArr))
+        LS.set('sortedCountries', sortedArr)
         return sortedArr
       })
     }

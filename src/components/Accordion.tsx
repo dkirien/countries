@@ -8,7 +8,6 @@ const Accordion: FC<Accordion> = ({ id, accordion, collapseAllBtn, children }) =
   const [instance, setInstance] = useState<Collapsible | null>(null)
 
   useEffect(() => {
-    /* Init accordion */
     if ( typeof window !== 'undefined' ) {
       M = require('materialize-css')
       setElem(document.querySelector(`#${id}`))

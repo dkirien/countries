@@ -88,3 +88,13 @@ export const isLangArrEqual = (arr1: ICommon[], arr2: ICommon[]) => {
 
   return JSON.stringify(arr1) === JSON.stringify(arr2)
 }
+
+export const LS = {
+  set(name: string, data: any): void {
+    localStorage.setItem(name, JSON.stringify(data))
+  },
+  get(name: string): any[] {
+    const data = localStorage.getItem(name)
+    return data ? JSON.parse(data) : []
+  }
+}

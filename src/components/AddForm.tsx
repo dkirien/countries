@@ -2,7 +2,7 @@ import { FC, useState } from 'react'
 import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
 import { CreatedCountry, FormPageProps, ICommon, IContinent, ICountry, SelectOptions } from '@/types'
-import { createCountryObj } from '@/helpers'
+import { createCountryObj, LS } from '@/helpers'
 import Select from '@/components/Select'
 
 const selectOptions: SelectOptions = {
@@ -35,8 +35,7 @@ const AddForm: FC<{ data: FormPageProps }> = ({ data }) => {
   const [isDeleteBtn, setIsDeleteBtn] = useState<boolean>(false)
 
   function submitForm(values: CreatedCountry) {
-    const ls = localStorage.getItem('createdCountries')
-    const arr = ls ? JSON.parse(ls) : []
+    const arr = LS.get('createdCountries')
 
     if ( arr.length > 0 ) {
       const existingIdx = arr.findIndex((item: IContinent) => {
@@ -53,7 +52,7 @@ const AddForm: FC<{ data: FormPageProps }> = ({ data }) => {
       arr.push(createCountryObj(values, data.continents, data.languages))
     }
 
-    localStorage.setItem('createdCountries', JSON.stringify(arr))
+    LS.set('createdCountries', arr)
     M.toast({ html: 'Country is added successfully!' })
     setIsDeleteBtn(false)
   }
@@ -62,8 +61,7 @@ const AddForm: FC<{ data: FormPageProps }> = ({ data }) => {
     name: string,
     setFieldValue: (field: string, value: any) => void,
   ) {
-    const ls = localStorage.getItem('createdCountries')
-    const arr = ls ? JSON.parse(ls) : []
+    const arr = LS.get('createdCountries')
     const searchItem = arr.find((item: IContinent) => item.child[0].name === name)
 
     if ( searchItem ) {
@@ -82,10 +80,8 @@ const AddForm: FC<{ data: FormPageProps }> = ({ data }) => {
     contCode: string,
     setFieldValue: (field: string, value: any) => void,
   ) {
-    const sorted = localStorage.getItem('sortedCountries')
-    const sortedArr = sorted ? JSON.parse(sorted) : []
-    const ls = localStorage.getItem('createdCountries')
-    const arr = ls ? JSON.parse(ls) : []
+    const sortedArr = LS.get('sortedCountries')
+    const arr = LS.get('createdCountries')
 
     if ( name && arr.length ) {
       const updatedCreated = arr.filter((item: IContinent) => item.child[0].name !== name)
@@ -96,8 +92,8 @@ const AddForm: FC<{ data: FormPageProps }> = ({ data }) => {
         return item
       })
 
-      localStorage.setItem('createdCountries', JSON.stringify(updatedCreated))
-      localStorage.setItem('sortedCountries', JSON.stringify(updatedSorted))
+      LS.set('createdCountries', updatedCreated)
+      LS.set('sortedCountries', updatedSorted)
 
       setIsDeleteBtn(false)
       setFieldValue('continent', data.continents[0].code)
