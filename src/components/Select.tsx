@@ -35,6 +35,8 @@ const Select: FC<SelectProps> = (
     }
   }, [value])
 
+  useEffect(() => initSelect(), [error])
+
   function initSelect() {
     M.FormSelect.init(elem, {
       ...options,
@@ -42,7 +44,7 @@ const Select: FC<SelectProps> = (
       dropdownOptions: {
         ...options.dropdownOptions,
         onCloseEnd: (el: HTMLInputElement) => {
-          // If multiple = true set values after dropdown close
+          // Если multiple = true устанавливать значение после закрытия селекта
           if ( multiple ) {
             const select = document.querySelector('#languages') as HTMLSelectElement
             const arr = []
@@ -52,7 +54,7 @@ const Select: FC<SelectProps> = (
                 arr.push(select.options[i].value)
             }
 
-            onCloseEnd && onCloseEnd(el, arr)
+            onCloseEnd && onCloseEnd(el, arr.length ? arr : '')
           }
         }
       }

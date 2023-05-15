@@ -35,6 +35,7 @@ const AddForm: FC<{ data: FormPageProps }> = ({ data }) => {
   const [isDeleteBtn, setIsDeleteBtn] = useState<boolean>(false)
 
   function submitForm(values: CreatedCountry) {
+    const sortedArr = LS.get('sortedCountries')
     const arr = LS.get('createdCountries')
 
     if ( arr.length > 0 ) {
@@ -42,8 +43,21 @@ const AddForm: FC<{ data: FormPageProps }> = ({ data }) => {
         return item.child[0].name === values.name
       })
 
+      // Если страна уже добавлена
       if ( existingIdx !== -1 ) {
-        // Если страна уже добавлена, заменяем на обновленную
+        // Если сменился континент
+        if ( (sortedArr.length > 0) && (arr[existingIdx].code !== values.continent)) {
+          const updatedSorting = sortedArr.map((sa: IContinent) => {
+            if ( sa.code ===  arr[existingIdx].code) {
+              sa.child = sa.child.filter((sac: ICountry) => sac.name !== values.name)
+            }
+
+            return sa
+          })
+
+          LS.set('sortedCountries', updatedSorting)
+        }
+
         arr[existingIdx] = createCountryObj(values, data.continents, data.languages)
       } else {
         arr.push(createCountryObj(values, data.continents, data.languages))

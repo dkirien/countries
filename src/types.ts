@@ -58,7 +58,7 @@ export type SelectProps = {
   multiple?: boolean
   s?: number
   onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void
-  onCloseEnd?: (el: HTMLInputElement, vale: string[]) => void
+  onCloseEnd?: (el: HTMLInputElement, value: string[] | '') => void
 }
 
 export type Collapsible = {
