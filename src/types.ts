@@ -1,5 +1,5 @@
-import { ReactNode } from 'react'
-import * as React from 'react'
+import React, { ReactNode } from 'react'
+import { DraggableProvided, DroppableProvided, ResponderProvided } from '@hello-pangea/dnd'
 
 export interface ICommon {
   __typename: string
@@ -18,6 +18,8 @@ export interface ICountry extends ICommon {
 export interface IListItem {
   title?: string | undefined
   content: any
+  index: number
+  provided: DroppableProvided
 }
 
 export type PageLayout = {
@@ -82,6 +84,7 @@ export type AccordionItem = {
   expanded?: boolean
   icon?: string
   children?: ReactNode | string
+  provided: DraggableProvided
 }
 
 export type FormPageProps = {

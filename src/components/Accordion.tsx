@@ -48,7 +48,7 @@ const Accordion: FC<Accordion> = ({ id, accordion, collapseAllBtn, children }) =
   return (
     <div>
       {collapseAllBtn && (
-        <div className="flex justify-end">
+        <div className="flex justify-end pb-4">
           <button
             className="btn bg-gray-900 text-white rounded-md text-sm font-medium hover:bg-gray-900 focus:bg-gray-900"
             type={'submit'}

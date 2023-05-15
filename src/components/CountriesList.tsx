@@ -1,5 +1,7 @@
 import { FC, useEffect, useState } from 'react'
+import { DragDropContext, Droppable } from '@hello-pangea/dnd'
 import { IContinent } from '@/types'
+import { isLangArrEqual, onDragEndHandler } from '@/helpers'
 import Accordion from '@/components/Accordion'
 import CountriesListItem from '@/components/CountriesListItem'
 
@@ -8,39 +10,73 @@ const CountriesList: FC<{ data: IContinent[] }> = ({ data }) => {
 
   useEffect(() => {
     if ( data ) {
-      const ls = localStorage.getItem('createdCountries')
-      const arr = ls ? JSON.parse(ls) : []
+      // Добавляем страны для будущей сортировки
+      if ( !localStorage.getItem('sortedCountries') )
+        localStorage.setItem('sortedCountries', JSON.stringify(data))
+
+      const sorted = localStorage.getItem('sortedCountries')
+      const sortedArr = sorted ? JSON.parse(sorted) : []
+      const cc = localStorage.getItem('createdCountries')
+      const ccArr = cc ? JSON.parse(cc) : []
 
       setCountries(() => {
-        if ( arr.length ) {
-          arr.forEach((cc: IContinent) => {
-            const currContIdx = data.findIndex(p => p.code === cc.code)
+        // Добавляем созданные страны
+        if ( ccArr.length ) {
+          ccArr.forEach((cc: IContinent) => {
+            // Находим индекс континента, к которому принадлежит страна
+            const currContIdx = sortedArr.findIndex((p: IContinent) => p.code === cc.code)
 
             if ( currContIdx !== -1 ) {
-              data[currContIdx].child.push(cc.child[0])
-              data[currContIdx].child.sort((a, b) => {
-                if ( a.name < b.name ) return -1
-                if ( a.name > b.name ) return 1
-                return 0
-              })
+              // Индекс страны, если такая уже существует
+              const existingCountryIdx = sortedArr[currContIdx].child.findIndex((item: any) => item.name === cc.child[0].name)
+
+              if ( existingCountryIdx !== -1 ) {
+                // Проверяем на идентичность массив языков
+                const existCountry = sortedArr[currContIdx].child[existingCountryIdx].child
+                const isEqual = isLangArrEqual(existCountry, cc.child[0].child)
+
+                if ( !isEqual )
+                  sortedArr[currContIdx].child[existingCountryIdx] = cc.child[0]
+              } else {
+                sortedArr[currContIdx].child.push(cc.child[0])
+              }
             }
           })
         }
 
-        return data
+        localStorage.setItem('sortedCountries', JSON.stringify(sortedArr))
+        return sortedArr
       })
     }
   }, [data])
 
   return (
     <>
-      {countries && (
-        <Accordion accordion={false} id={'accordion'} collapseAllBtn>
-          {countries.map(c => (
-            <CountriesListItem title={c.name} content={c} key={c.code} />
-          ))}
-        </Accordion>
-      )}
+      <DragDropContext
+        onDragEnd={result => onDragEndHandler(result, countries, setCountries)}
+      >
+        <Droppable droppableId="droppableAccordion">
+          {provided => (
+            <div
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+            >
+              <Accordion accordion={false} id={'accordion'} collapseAllBtn>
+                {countries.map((c, index) => (
+                  <CountriesListItem
+                    key={c.code}
+                    title={c.name}
+                    content={c}
+                    index={index}
+                    provided={provided}
+                  />
+                ))}
+                {provided.placeholder}
+              </Accordion>
+            </div>
+          )}
+        </Droppable>
+      </DragDropContext>
     </>
   )
 }

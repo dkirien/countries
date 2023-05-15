@@ -30,7 +30,6 @@ const Select: FC<SelectProps> = (
   }, [elem])
 
   useEffect(() => {
-    // Reset value after form submit
     if ( typeof value !== 'undefined' ) {
       const select = document.querySelector(`#${id}`) as HTMLSelectElement
       setSelectValue(select)

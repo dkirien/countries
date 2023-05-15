@@ -1,8 +1,8 @@
 import { FC, useState } from 'react'
 import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
-import { CreatedCountry, FormPageProps, ICommon, IContinent, SelectOptions } from '@/types'
-import { createCountryObf } from '@/helpers'
+import { CreatedCountry, FormPageProps, ICommon, IContinent, ICountry, SelectOptions } from '@/types'
+import { createCountryObj } from '@/helpers'
 import Select from '@/components/Select'
 
 const selectOptions: SelectOptions = {
@@ -44,12 +44,13 @@ const AddForm: FC<{ data: FormPageProps }> = ({ data }) => {
       })
 
       if ( existingIdx !== -1 ) {
-        arr[existingIdx] = createCountryObf(values, data.continents, data.languages)
+        // Если страна уже добавлена, заменяем на обновленную
+        arr[existingIdx] = createCountryObj(values, data.continents, data.languages)
       } else {
-        arr.push(createCountryObf(values, data.continents, data.languages))
+        arr.push(createCountryObj(values, data.continents, data.languages))
       }
     } else {
-      arr.push(createCountryObf(values, data.continents, data.languages))
+      arr.push(createCountryObj(values, data.continents, data.languages))
     }
 
     localStorage.setItem('createdCountries', JSON.stringify(arr))
@@ -78,14 +79,26 @@ const AddForm: FC<{ data: FormPageProps }> = ({ data }) => {
 
   function deleteCustomCountry(
     name: string,
+    contCode: string,
     setFieldValue: (field: string, value: any) => void,
   ) {
+    const sorted = localStorage.getItem('sortedCountries')
+    const sortedArr = sorted ? JSON.parse(sorted) : []
     const ls = localStorage.getItem('createdCountries')
     const arr = ls ? JSON.parse(ls) : []
 
     if ( name && arr.length ) {
-      const filteredArr = arr.filter((item: IContinent) => item.child[0].name !== name)
-      localStorage.setItem('createdCountries', JSON.stringify(filteredArr))
+      const updatedCreated = arr.filter((item: IContinent) => item.child[0].name !== name)
+      const updatedSorted = sortedArr.map((item: IContinent) => {
+        if ( item.code === contCode )
+          item.child = item.child.filter((item: ICountry) => item.name !== name)
+
+        return item
+      })
+
+      localStorage.setItem('createdCountries', JSON.stringify(updatedCreated))
+      localStorage.setItem('sortedCountries', JSON.stringify(updatedSorted))
+
       setIsDeleteBtn(false)
       setFieldValue('continent', data.continents[0].code)
       setFieldValue('languages', '')
@@ -186,7 +199,9 @@ const AddForm: FC<{ data: FormPageProps }> = ({ data }) => {
                       <button
                         className="btn bg-red-600 mr-5 text-white rounded-md text-sm font-medium hover:bg-gray-900 focus:bg-gray-900"
                         type={'submit'}
-                        onClick={() => deleteCustomCountry(values.name, setFieldValue)}
+                        onClick={() => {
+                          deleteCustomCountry(values.name, values.continent, setFieldValue)
+                        }}
                       >
                         Delete
                       </button>
